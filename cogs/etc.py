@@ -18,5 +18,9 @@ class EtcCog(commands.Cog, name = "etc"):
 
         await ctx.send(embed = embed)
 
+    @commands.command()
+    async def license(self, ctx):
+        await ctx.send(embed = discord.Embed(description="https://github.com/ImVaskel/diabetes-discord-rank-bot/blob/master/LICENSE"))
+
 def setup(bot):
     bot.add_cog(EtcCog(bot))
