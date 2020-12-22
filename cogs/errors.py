@@ -4,6 +4,8 @@ import prettify_exceptions
 
 class ErrorsCog(commands.Cog, name = "Errors"):
     #Error handler
+    def __init__(self, bot):
+        self.bot = bot
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -14,6 +16,14 @@ class ErrorsCog(commands.Cog, name = "Errors"):
 
         if isinstance(error, ignored_errors):
             return
+
+        setattr(ctx, "original_author_id", getattr(ctx, "original_author_id", ctx.author.id))
+        owner_reinvoke_errors = (
+            commands.CommandOnCooldown, commands.DisabledCommand
+        )
+
+        if ctx.original_author_id in self.bot.owner_ids and isinstance(error, owner_reinvoke_errors):
+            return await ctx.reinvoke()
 
         if isinstance(error, stringed_errors):
             await ctx.reply(embed=discord.Embed(title=str(error), color=discord.Color.red()))
