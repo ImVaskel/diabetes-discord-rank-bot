@@ -30,6 +30,7 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.content == f"<@{self.bot.user.id} hi": await message.reply("Hi")
         if message.channel.id in self.bot.blacklist or message.guild.id != 257554742371155998:
             return
         if not message.author.bot:
