@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands, flags
 import prettify_exceptions
+import mystbin
 
 class ErrorsCog(commands.Cog, name = "Errors"):
     #Error handler
     def __init__(self, bot):
         self.bot = bot
+        self.mystbin = mystbin.Client()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -24,12 +26,13 @@ class ErrorsCog(commands.Cog, name = "Errors"):
         else:
             prettify_exceptions.DefaultFormatter().theme['_ansi_enabled'] = False
             traceback = ''.join(prettify_exceptions.DefaultFormatter().format_exception(type(error), error, error.__traceback__))
+            url = await self.mystbin.post(traceback, syntax="py")
             embed = discord.Embed(title = "An error occurred!",
-                                  description = "[Please report this to the bots GitHub with the codeblock's content.](https://github.com/ImVaskel/diabetes-discord-rank-bot)",
+                                  description = "[Please report this to the bots GitHub with the mystbin link.](https://github.com/ImVaskel/diabetes-discord-rank-bot)",
                                   color = discord.Color.red(),
                                   timestamp = ctx.message.created_at)
-            embed.add_field(name = "Error Details: ",
-                            value = f"```py\n{error}```")
+            embed.add_field(name = "Mystbin Link: ",
+                            value = str(url))
             embed.set_footer(text = "That above is a hyperlink to the github, click it!")
 
             await ctx.send(embed = embed)

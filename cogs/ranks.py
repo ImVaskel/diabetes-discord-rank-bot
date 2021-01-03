@@ -58,8 +58,6 @@ class RanksCog(commands.Cog, name = "Ranks"):
         a = [[self.bot.get_user(i), sorted_d[i]] for i in list(sorted_d.keys())]
         return a
 
-
-
     def get_card(self, args):
         image = Generator().generate_profile(**args)
         return image
