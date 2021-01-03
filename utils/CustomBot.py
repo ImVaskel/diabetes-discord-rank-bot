@@ -1,7 +1,8 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, ipc
 import asyncio
 import aiosqlite
+import settings
 
 class CustomBot(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
@@ -19,6 +20,11 @@ class CustomBot(commands.AutoShardedBot):
         self.blacklist = self.loop.run_until_complete(self.get_blacklist())
         self.level_roles = self.loop.run_until_complete(self.get_roles())
 
+        #IPC server setup
+        self.ipc = ipc.Server(self, "localhost", 8765, settings.ipc_key())
+
+    async def on_ipc_ready(self):
+        print("IPC ready")
 
     async def get_ranks(self):
         ranks = {}

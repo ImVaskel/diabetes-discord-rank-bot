@@ -1,13 +1,29 @@
 import functools
 import io
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands, tasks, menus
 from discord.ext.commands.cooldowns import BucketType
 import random
 from disrank.generator import Generator
 import asyncio
 import operator
+from cogs.utils.paginator import SimplePages
 
+class LeaderboardPagesEntries:
+    __slots__ = ('user', 'xp')
+
+    def __init__(self, entry):
+        self.xp = entry[1]
+        self.user = entry[0]
+
+    def __str__(self):
+        return f'{self.user} XP: {self.xp}'
+
+
+class LeaderboardPages(SimplePages):
+    def __init__(self, entries, *, per_page=12):
+        converted = [LeaderboardPagesEntries(entry) for entry in entries]
+        super().__init__(converted, per_page=per_page)
 
 def _get_level_xp(n):
     return 5 * (n ** 2) + 50 * n + 100
@@ -36,6 +52,13 @@ class RanksCog(commands.Cog, name = "Ranks"):
 
     def cog_unload(self):
         self.update_db.cancel()
+
+    def get_sorted_leaderboard(self) -> list:
+        sorted_d = dict(sorted(self.bot.ranks.items(), key=operator.itemgetter(1), reverse=True))
+        a = [[self.bot.get_user(i), sorted_d[i]] for i in list(sorted_d.keys())]
+        return a
+
+
 
     def get_card(self, args):
         image = Generator().generate_profile(**args)
@@ -134,6 +157,15 @@ class RanksCog(commands.Cog, name = "Ranks"):
     @commands.command()
     async def xp(self, ctx, level: int):
         await ctx.reply(f"To get to level `{level}` you need `{_get_level_xp(level)}` xp")
+
+    @commands.command(aliases = ['levels'])
+    async def leaderboard(self, ctx):
+        try:
+            p = LeaderboardPages(entries= self.get_sorted_leaderboard(), per_page=20)
+            await p.start(ctx)
+        except menus.MenuError as e:
+            await ctx.send(e)
+
 
 
 

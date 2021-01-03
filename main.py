@@ -1,6 +1,6 @@
 import discord
 import os
-from discord.ext import commands
+from discord.ext import commands, ipc
 from settings import token
 from utils.CustomBot import CustomBot
 
@@ -23,6 +23,7 @@ async def on_ready():
 
 #Load cogs
 if __name__ == "__main__":
+    bot.ipc.start()
     for extension in startup_extensions:
         try:
             bot.load_extension(extension)
