@@ -28,15 +28,12 @@ class ErrorsCog(commands.Cog, name = "Errors"):
             traceback = ''.join(prettify_exceptions.DefaultFormatter().format_exception(type(error), error, error.__traceback__))
             url = await self.mystbin.post(traceback, syntax="py")
             embed = discord.Embed(title = "An error occurred!",
-                                  description = "[Please report this to the bots GitHub with the mystbin link.](https://github.com/ImVaskel/diabetes-discord-rank-bot)",
+                                  description = "[Please report this to the bots GitHub with the mystbin link.](https://github.com/ImVaskel/diabetes-discord-rank-bot) \n {url}",
                                   color = discord.Color.red(),
                                   timestamp = ctx.message.created_at)
-            embed.add_field(name = "Mystbin Link: ",
-                            value = str(url))
             embed.set_footer(text = "That above is a hyperlink to the github, click it!")
 
             await ctx.send(embed = embed)
-            print(traceback)
 
 def setup(bot):
     bot.add_cog(ErrorsCog(bot))
