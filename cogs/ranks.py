@@ -36,6 +36,12 @@ def _get_remaining_xp(xp):
         level += 1
     return remaining_xp
 
+def _get_xp_for_level(level):
+    xp = 0
+    for i in range(level+1):
+        xp += _get_level_xp(i)
+    return xp
+
 def _get_level_from_xp(xp):
     remaining_xp = int(xp)
     level = 0
@@ -154,7 +160,7 @@ class RanksCog(commands.Cog, name = "Ranks"):
 
     @commands.command()
     async def xp(self, ctx, level: int):
-        await ctx.reply(f"To get to level `{level}` you need `{_get_level_from_xp(level)}` xp")
+        await ctx.reply(f"To get to level `{level}` you need `{_get_xp_for_level(level)}` xp")
 
     @commands.command()
     async def leaderboard(self, ctx):
