@@ -154,7 +154,7 @@ class RanksCog(commands.Cog, name = "Ranks"):
 
     @commands.command()
     async def xp(self, ctx, level: int):
-        await ctx.reply(f"To get to level `{level}` you need `{_get_level_xp(level)}` xp")
+        await ctx.reply(f"To get to level `{level}` you need `{_get_level_from_xp(level)}` xp")
 
     @commands.command()
     async def leaderboard(self, ctx):
